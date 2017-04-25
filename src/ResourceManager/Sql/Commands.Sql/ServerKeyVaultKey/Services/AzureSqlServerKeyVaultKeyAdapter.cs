@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------
 //
 // Copyright Microsoft Corporation
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
 using Microsoft.Azure.Commands.Common.Authentication.Models;
 using Microsoft.Azure.Commands.Sql.ServerKeyVaultKey.Model;
 using Microsoft.Azure.Commands.Sql.Services;
-using Microsoft.Azure.Management.Sql.Models;
+using Microsoft.Azure.Management.Sql.LegacySdk.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,7 +87,7 @@ namespace Microsoft.Azure.Commands.Sql.ServerKeyVaultKey.Services
             {
                 Properties = new ServerKeyCreateOrUpdateProperties()
                 {
-                    Type = ServerKeyType.AzureKeyVault,
+                    ServerKeyType = ServerKeyType.AzureKeyVault,
                     Uri = model.Uri
                 }
             });
@@ -108,20 +108,20 @@ namespace Microsoft.Azure.Commands.Sql.ServerKeyVaultKey.Services
         }
 
         /// <summary>
-        /// Convert a Management.Sql.Models.ServerKey to AzureSqlServerKeyVaultKeyModel
+        /// Convert a Management.Sql.LegacySdk.Models.ServerKey to AzureSqlServerKeyVaultKeyModel
         /// </summary>
         /// <param name="resourceGroup">The resource group the server is in</param>
         /// <param name="serverName">The name of the server</param>
         /// <param name="resp">The management client server key response to convert</param>
         /// <returns>The converted server key vault key model</returns>
-        private static AzureSqlServerKeyVaultKeyModel CreateServerKeyModelFromResponse(string resourceGroup, string serverName, string keyName, Microsoft.Azure.Management.Sql.Models.ServerKey resp)
+        private static AzureSqlServerKeyVaultKeyModel CreateServerKeyModelFromResponse(string resourceGroup, string serverName, string keyName, Microsoft.Azure.Management.Sql.LegacySdk.Models.ServerKey resp)
         {
             AzureSqlServerKeyVaultKeyModel ServerKey = new AzureSqlServerKeyVaultKeyModel();
             ServerKey.ResourceGroupName = resourceGroup;
             ServerKey.ServerName = serverName;
             ServerKey.ServerKeyName = resp.Name;
             AzureSqlServerKeyVaultKeyModel.ServerKeyType type = AzureSqlServerKeyVaultKeyModel.ServerKeyType.AzureKeyVault;
-            Enum.TryParse<AzureSqlServerKeyVaultKeyModel.ServerKeyType>(resp.Properties.Type, out type);
+            Enum.TryParse<AzureSqlServerKeyVaultKeyModel.ServerKeyType>(resp.Properties.ServerKeyType, out type);
             ServerKey.Type = type;
             ServerKey.Uri = resp.Properties.Uri;
             ServerKey.Thumbprint = resp.Properties.Thumbprint;
